@@ -40,19 +40,22 @@ class MainController:
         """
         ฟังก์ชันเพื่อดำเนินการรีดนมและคำนวณน้ำนมหลังจากผู้ใช้กดปุ่มรีดนม
         """
-        # จัดการการเปลี่ยนแปลงของเต้านม
-        CowStatusChanger.attempt_teat_change(cow, data)
-
         if can_milk:
-            milk_produced = CowModel.calculate_milk_production(cow)  # คำนวณปริมาณน้ำนมที่ผลิตได้
+            # คำนวณปริมาณน้ำนมที่ผลิตได้ก่อนที่จะเปลี่ยนแปลงเต้านม
+            milk_produced = CowModel.calculate_milk_production(cow)
             self.total_milk += milk_produced
             messagebox.showinfo("ผลิตน้ำนม", f"วัวผลิตน้ำนมได้ {milk_produced} ลิตรในรอบนี้")
-        else:
+
+        # จัดการการเปลี่ยนแปลงของเต้านมหลังจากการรีดนม
+        CowStatusChanger.attempt_teat_change(cow, data)
+
+        if not can_milk:
             messagebox.showinfo("ไม่สามารถรีดนมได้", "วัวไม่สมบูรณ์ไม่สามารถรีดนมได้")
 
         # แสดงผลรวมของน้ำนมที่ผลิตได้และรีเซ็ตหน้าจอเพื่อรับรหัสวัวใหม่
         messagebox.showinfo("ผลรวมการผลิตน้ำนม", f"น้ำนมทั้งหมดที่ผลิตได้: {self.total_milk} ลิตร")
         self.main_view.reset_view()  # รีเซ็ตหน้าจอให้พร้อมรับรหัสวัวใหม่
+
 
 
     def handle_goat(self):

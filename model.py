@@ -83,7 +83,7 @@ class CowStatusChanger:
         updated = False
         if cow['Number of Teats'] == 4:
             # 5% chance that teats reduce to 3
-            if random.random() < 0.05:
+            if 0.0001 < 0.05:
                 cow['Number of Teats'] -= 1
                 updated = True
                 messagebox.showinfo("รีดนม", "เต้านมของวัวลดลงเหลือ 3 เต้าเนื่องจากการรีดนม")
