@@ -1,30 +1,32 @@
-# main_controller.py
-from model import DataStorage  # ตรวจสอบให้แน่ใจว่า path นี้ถูกต้องตามโครงสร้างโฟลเดอร์
-from view.view import MainView
+from model import DataStorage
+from view.view import MainView, CowView, GoatView
 import tkinter as tk
-
+from tkinter import messagebox
 
 class MainController:
     def __init__(self):
         self.root = tk.Tk()
         self.main_view = MainView(self.root, self)
+        self.cow_view = CowView(self.root)
+        self.goat_view = GoatView(self.root)
         self.main_view.create_window()
         self.data_storage = DataStorage()  # สร้างอินสแตนซ์ของ DataStorage สำหรับการโหลดข้อมูล
         self.root.mainloop()
 
     def check_cow_in_system(self, cow_id):
         """
-        ตรวจสอบว่ามีวัวในระบบหรือไม่โดยใช้รหัสวัว
+        ตรวจสอบว่ามีวัวหรือแพะในระบบหรือไม่โดยใช้รหัส
         """
         data = self.data_storage.load_file()  # โหลดข้อมูลวัวจาก DataStorage
-        cow_exists = any(cow['ID'] == cow_id for cow in data)  # ตรวจสอบว่ารหัสวัวตรงกับข้อมูลใดในระบบหรือไม่
+        animal = next((cow for cow in data if cow['ID'] == cow_id), None)  # ค้นหาวัวหรือแพะจากข้อมูล
 
-        if cow_exists:
-            print("วัวที่มีรหัสนี้อยู่ในระบบ")
-        else:
-            print("ไม่พบวัวในระบบ")   
-  
- 
+        if not animal:
+            messagebox.showerror("ข้อผิดพลาด", "ไม่พบวัวหรือแพะในระบบ")
+        elif animal['Type'] == 'Cow':
+            self.cow_view.show_milking_view(animal)
+        elif animal['Type'] == 'Goat':
+            self.goat_view.show_goat_view()
+
 class GoatController:
     pass
 

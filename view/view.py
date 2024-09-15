@@ -1,5 +1,3 @@
-from model import DataStorage\
-
 import tkinter as tk
 from tkinter import messagebox
 
@@ -35,9 +33,27 @@ class MainView:
         else:
             self.controller.check_cow_in_system(cow_id)  # ส่งค่ารหัสวัวไปตรวจสอบใน Controller
 
-
 class CowView:
-    pass
-class GoatView:
-    pass
+    def __init__(self, root):
+        self.root = root
 
+    def show_milking_view(self, cow):
+        # แสดงผลสำหรับการรีดนมวัว
+        milking_window = tk.Toplevel(self.root)
+        milking_window.title("รีดนมวัว")
+        if cow['Number of Teats'] == 4:
+            tk.Label(milking_window, text="วัวสามารถรีดนมได้").pack(pady=10)
+        else:
+            tk.Label(milking_window, text="วัวไม่สมบูรณ์ไม่สามารถรีดนมได้").pack(pady=10)
+        tk.Button(milking_window, text="ปิด", command=milking_window.destroy).pack(pady=5)
+
+class GoatView:
+    def __init__(self, root):
+        self.root = root
+
+    def show_goat_view(self):
+        # แสดงผลในกรณีที่เป็นแพะ พร้อมปุ่มสำหรับไล่แพะออกไป
+        goat_window = tk.Toplevel(self.root)
+        goat_window.title("ไล่แพะออกไป")
+        tk.Label(goat_window, text="พบแพะในระบบ!").pack(pady=10)
+        tk.Button(goat_window, text="ไล่แพะออกไป", command=goat_window.destroy).pack(pady=5)
