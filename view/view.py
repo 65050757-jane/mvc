@@ -1,10 +1,13 @@
+from model import DataStorage\
+
 import tkinter as tk
+from tkinter import messagebox
 
 class MainView:
     def __init__(self, root, controller):
         self.root = root
         self.controller = controller
-        self.root.title("")
+        self.root.title("ค้นหาวัวในระบบ")
         self.root.geometry("600x400")
 
     def create_window(self):
@@ -14,6 +17,24 @@ class MainView:
 
         self.entry = tk.Entry(self.root)
         self.entry.pack(pady=5)
+
+        self.submit_button = tk.Button(self.root, text="ค้นหา", command=self.search_cow)
+        self.submit_button.pack(pady=5)
+
+    def search_cow(self):
+        # ดึงค่ารหัสวัวจาก Entry และส่งไปยัง Controller
+        cow_id = self.entry.get()  # ดึงค่าจากช่องอินพุต
+
+        # ตรวจสอบเงื่อนไขตามที่กำหนด
+        if not cow_id.isdigit():
+            messagebox.showerror("ข้อผิดพลาด", "กรุณากรอกตัวเลขเท่านั้น")
+        elif len(cow_id) != 8:
+            messagebox.showerror("ข้อผิดพลาด", "กรุณากรอกตัวเลข 8 หลัก")
+        elif cow_id[0] == '0':
+            messagebox.showerror("ข้อผิดพลาด", "รหัสไม่สามารถขึ้นต้นด้วยเลข 0")
+        else:
+            self.controller.check_cow_in_system(cow_id)  # ส่งค่ารหัสวัวไปตรวจสอบใน Controller
+
 
 class CowView:
     pass
