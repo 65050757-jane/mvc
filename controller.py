@@ -31,12 +31,13 @@ class MainController:
         """
         ตรวจสอบและแสดงผลการรีดนมของวัว รวมถึงการจัดการเปลี่ยนแปลงเต้านม
         """
+        data = self.data_storage.load_file()  # โหลดข้อมูลวัวจาก DataStorage เพื่อใช้ในการอัปเดตข้อมูลใน CSV
         if CowModel.can_be_milked(cow):
             self.cow_view.show_milking_view(cow, can_milk=True)
-            CowStatusChanger.attempt_teat_change(cow)  # เรียกใช้การเปลี่ยนแปลงจำนวนเต้านมหลังการรีดนม
+            CowStatusChanger.attempt_teat_change(cow, data)  # ส่งทั้ง cow และ data เพื่อให้สามารถอัปเดตข้อมูลใน CSV ได้
         else:
             self.cow_view.show_milking_view(cow, can_milk=False)
-            CowStatusChanger.attempt_teat_change(cow)  # เรียกใช้การเปลี่ยนแปลงในกรณีที่วัวมี 3 เต้า
+            CowStatusChanger.attempt_teat_change(cow, data)  # ส่งทั้ง cow และ data เพื่อให้สามารถอัปเดตข้อมูลใน CSV ได้
 
     def handle_goat(self):
         """

@@ -1,11 +1,16 @@
 import csv
 import random
+from tkinter import messagebox
 
 class DataStorage:
-    FILE_PATH = 'model/cow.csv'
+    FILE_PATH = 'model/cow.csv'  # Updated file path for saving changes
 
     @staticmethod
     def load_file():
+        """
+        Load animal data from the CSV file.
+        Returns a list of dictionaries representing each animal.
+        """
         data = []
         try:
             with open(DataStorage.FILE_PATH, newline='', encoding='utf-8') as csvfile:
@@ -24,6 +29,21 @@ class DataStorage:
             print(f"An error occurred: {e}")
         return data
 
+    @staticmethod
+    def save_file(data):
+        """
+        Save the updated data back to the CSV file.
+        """
+        headers = ['ID', 'Type', 'Age (Years)', 'Age (Months)', 'Date of Birth', 'Number of Teats']
+        try:
+            with open(DataStorage.FILE_PATH, mode='w', newline='', encoding='utf-8') as csvfile:
+                writer = csv.DictWriter(csvfile, fieldnames=headers)
+                writer.writeheader()
+                for row in data:
+                    writer.writerow(row)
+            print("Data saved successfully.")
+        except Exception as e:
+            print(f"An error occurred while saving the file: {e}")
 
 class CowModel:
     @staticmethod
@@ -33,7 +53,6 @@ class CowModel:
         """
         return cow['Number of Teats'] == 4
 
-
 class GoatModel:
     @staticmethod
     def handle_goat():
@@ -42,22 +61,40 @@ class GoatModel:
         """
         print("พบแพะในระบบ ให้เตรียมส่งกลับไปที่ภูเขา")
 
-
 class CowStatusChanger:
     @staticmethod
-    def attempt_teat_change(cow):
+    def attempt_teat_change(cow, data):
         """
-        พิจารณาการเปลี่ยนแปลงจำนวนเต้านมของวัวตามเงื่อนไข:
-        - ถ้าวัวมี 4 เต้าและถูกรีดนม มีโอกาส 5% ที่จะลดลง 1 เต้า
-        - ถ้าวัวมี 3 เต้า มีโอกาส 20% ที่จะเพิ่มกลับมาเป็น 4 เต้า
+        Attempt to change the number of teats based on specific conditions and save changes to CSV:
+        - If the cow has 4 teats and is milked, there is a 5% chance to reduce teats to 3.
+        - If the cow has 3 teats, there is a 20% chance to recover to 4 teats.
         """
+        updated = False
         if cow['Number of Teats'] == 4:
-            # โอกาส 5% ที่เต้านมจะลดลง 1 เต้า
+            # 5% chance that teats reduce to 3
             if random.random() < 0.05:
                 cow['Number of Teats'] -= 1
-                print("เต้านมของวัวลดลงเหลือ 3 เต้าเนื่องจากการรีดนม")
+                updated = True
+                messagebox.showinfo("รีดนม", "เต้านมของวัวลดลงเหลือ 3 เต้าเนื่องจากการรีดนม")
+
         elif cow['Number of Teats'] == 3:
-            # โอกาส 20% ที่เต้านมจะเพิ่มกลับมาเป็น 4 เต้า
+            # 20% chance that teats increase to 4
             if random.random() < 0.20:
                 cow['Number of Teats'] += 1
-                print("วัวกลับมามี 4 เต้าเนื่องจากการฟื้นตัว")
+                updated = True
+                messagebox.showinfo("การฟื้นตัว", "วัวกลับมามี 4 เต้าเนื่องจากการฟื้นตัว")
+
+        # Update the data in the CSV if changes occurred
+        if updated:
+            # Save the updated data back to the CSV file by ensuring the cow object is correctly referenced in the data list
+            for index, animal in enumerate(data):
+                if animal['ID'] == cow['ID']:
+                    data[index] = cow  # Update the exact cow in the data list
+                    break
+            DataStorage.save_file(data)
+
+# Example of calling CowStatusChanger with the correct data parameter
+data = DataStorage.load_file()
+if data:
+    cow = data[0]  # Example: Using the first cow in the data
+    CowStatusChanger.attempt_teat_change(cow, data)  # Passing the data list correctly
