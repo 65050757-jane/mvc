@@ -74,7 +74,7 @@ class GoatModel:
 
 class CowStatusChanger:
     @staticmethod
-    def attempt_teat_change(cow, data):
+    def attempt_teat_change(cow, data, show_recovery_popup=False):
         """
         Attempt to change the number of teats based on specific conditions and save changes to CSV:
         - If the cow has 4 teats and is milked, there is a 5% chance to reduce teats to 3.
@@ -83,17 +83,17 @@ class CowStatusChanger:
         updated = False
         if cow['Number of Teats'] == 4:
             # 5% chance that teats reduce to 3
-            if 0.0001 < 0.05:
+            if random.random() < 0.05:
                 cow['Number of Teats'] -= 1
                 updated = True
                 messagebox.showinfo("รีดนม", "เต้านมของวัวลดลงเหลือ 3 เต้าเนื่องจากการรีดนม")
-
         elif cow['Number of Teats'] == 3:
             # 20% chance that teats increase to 4
             if random.random() < 0.20:
                 cow['Number of Teats'] += 1
                 updated = True
-                messagebox.showinfo("การฟื้นตัว", "วัวกลับมามี 4 เต้าเนื่องจากการฟื้นตัว")
+                if show_recovery_popup:
+                    messagebox.showinfo("การฟื้นตัว", "วัวกลับมามี 4 เต้าเนื่องจากการฟื้นตัว")
 
         # Update the data in the CSV if changes occurred
         if updated:
@@ -103,6 +103,7 @@ class CowStatusChanger:
                     data[index] = cow  # Update the exact cow in the data list
                     break
             DataStorage.save_file(data)
+
 
 # Example of calling CowStatusChanger with the correct data parameter
 data = DataStorage.load_file()

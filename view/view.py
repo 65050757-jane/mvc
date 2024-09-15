@@ -13,7 +13,7 @@ class MainView:
         # ส่วนของการรับรหัสวัว
         self.label = tk.Label(self.root, text="กรุณากรอกรหัสวัว:")
         self.label.pack(pady=10)
-
+        
         self.entry = tk.Entry(self.root, justify='center')
         self.entry.pack(pady=5)
 
