@@ -53,6 +53,17 @@ class CowModel:
         """
         return cow['Number of Teats'] == 4
 
+    @staticmethod
+    def calculate_milk_production(cow):
+        """
+        คำนวณจำนวนน้ำนมที่ผลิตได้ในรอบนั้น โดยจำนวนน้ำนมวัวจะเท่ากับจำนวนปีในอายุของวัว
+        บวกด้วยจำนวนเดือนในอายุของวัว หน่วยเป็นลิตร
+        """
+        age_years = cow.get('Age (Years)', 0)
+        age_months = cow.get('Age (Months)', 0)
+        return age_years + age_months
+
+
 class GoatModel:
     @staticmethod
     def handle_goat():

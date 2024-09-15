@@ -11,6 +11,7 @@ class MainController:
         self.goat_view = GoatView(self.root)
         self.main_view.create_window()
         self.data_storage = DataStorage()  # สร้างอินสแตนซ์ของ DataStorage สำหรับการโหลดข้อมูล
+        self.total_milk = 0  # Track total milk production
         self.root.mainloop()
 
     def check_cow_in_system(self, cow_id):
@@ -23,21 +24,36 @@ class MainController:
         if not animal:
             messagebox.showerror("ข้อผิดพลาด", "ไม่พบวัวหรือแพะในระบบ")
         elif animal['Type'] == 'Cow':
-            self.handle_cow(animal)
+            self.handle_cow(animal, data)
         elif animal['Type'] == 'Goat':
             self.handle_goat()
 
-    def handle_cow(self, cow):
+    def handle_cow(self, cow, data):
         """
-        ตรวจสอบและแสดงผลการรีดนมของวัว รวมถึงการจัดการเปลี่ยนแปลงเต้านม
+        ตรวจสอบและแสดงผลการรีดนมของวัว รวมถึงการจัดการเปลี่ยนแปลงเต้านมและการคำนวณปริมาณน้ำนมที่ผลิตได้
         """
-        data = self.data_storage.load_file()  # โหลดข้อมูลวัวจาก DataStorage เพื่อใช้ในการอัปเดตข้อมูลใน CSV
-        if CowModel.can_be_milked(cow):
-            self.cow_view.show_milking_view(cow, can_milk=True)
-            CowStatusChanger.attempt_teat_change(cow, data)  # ส่งทั้ง cow และ data เพื่อให้สามารถอัปเดตข้อมูลใน CSV ได้
+        # เรียกหน้าจอรีดนมขึ้นมาก่อน
+        can_milk = CowModel.can_be_milked(cow)
+        self.cow_view.show_milking_view(cow, can_milk, lambda: self.perform_milking(cow, can_milk, data))
+
+    def perform_milking(self, cow, can_milk, data):
+        """
+        ฟังก์ชันเพื่อดำเนินการรีดนมและคำนวณน้ำนมหลังจากผู้ใช้กดปุ่มรีดนม
+        """
+        # จัดการการเปลี่ยนแปลงของเต้านม
+        CowStatusChanger.attempt_teat_change(cow, data)
+
+        if can_milk:
+            milk_produced = CowModel.calculate_milk_production(cow)  # คำนวณปริมาณน้ำนมที่ผลิตได้
+            self.total_milk += milk_produced
+            messagebox.showinfo("ผลิตน้ำนม", f"วัวผลิตน้ำนมได้ {milk_produced} ลิตรในรอบนี้")
         else:
-            self.cow_view.show_milking_view(cow, can_milk=False)
-            CowStatusChanger.attempt_teat_change(cow, data)  # ส่งทั้ง cow และ data เพื่อให้สามารถอัปเดตข้อมูลใน CSV ได้
+            messagebox.showinfo("ไม่สามารถรีดนมได้", "วัวไม่สมบูรณ์ไม่สามารถรีดนมได้")
+
+        # แสดงผลรวมของน้ำนมที่ผลิตได้และรีเซ็ตหน้าจอเพื่อรับรหัสวัวใหม่
+        messagebox.showinfo("ผลรวมการผลิตน้ำนม", f"น้ำนมทั้งหมดที่ผลิตได้: {self.total_milk} ลิตร")
+        self.main_view.reset_view()  # รีเซ็ตหน้าจอให้พร้อมรับรหัสวัวใหม่
+
 
     def handle_goat(self):
         """
@@ -46,9 +62,8 @@ class MainController:
         GoatModel.handle_goat()
         self.goat_view.show_goat_view()
 
-
-
-
+# Run the program
 if __name__ == '__main__':
     controller = MainController()
+
     
