@@ -1,4 +1,4 @@
-from model import DataStorage
+from model import DataStorage, CowModel, GoatModel
 from view.view import MainView, CowView, GoatView
 import tkinter as tk
 from tkinter import messagebox
@@ -23,15 +23,26 @@ class MainController:
         if not animal:
             messagebox.showerror("ข้อผิดพลาด", "ไม่พบวัวหรือแพะในระบบ")
         elif animal['Type'] == 'Cow':
-            self.cow_view.show_milking_view(animal)
+            self.handle_cow(animal)
         elif animal['Type'] == 'Goat':
-            self.goat_view.show_goat_view()
+            self.handle_goat()
 
-class GoatController:
-    pass
+    def handle_cow(self, cow):
+        """
+        ตรวจสอบและแสดงผลการรีดนมของวัว
+        """
+        if CowModel.can_be_milked(cow):
+            self.cow_view.show_milking_view(cow, can_milk=True)
+        else:
+            self.cow_view.show_milking_view(cow, can_milk=False)
 
-class CowController:
-    pass
+    def handle_goat(self):
+        """
+        แสดงผลในกรณีที่เป็นแพะ
+        """
+        GoatModel.handle_goat()
+        self.goat_view.show_goat_view()
+
 
 
 if __name__ == '__main__':

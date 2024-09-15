@@ -33,19 +33,21 @@ class MainView:
         else:
             self.controller.check_cow_in_system(cow_id)  # ส่งค่ารหัสวัวไปตรวจสอบใน Controller
 
+
 class CowView:
     def __init__(self, root):
         self.root = root
 
-    def show_milking_view(self, cow):
+    def show_milking_view(self, cow, can_milk):
         # แสดงผลสำหรับการรีดนมวัว
         milking_window = tk.Toplevel(self.root)
         milking_window.title("รีดนมวัว")
-        if cow['Number of Teats'] == 4:
+        if can_milk:
             tk.Label(milking_window, text="วัวสามารถรีดนมได้").pack(pady=10)
         else:
             tk.Label(milking_window, text="วัวไม่สมบูรณ์ไม่สามารถรีดนมได้").pack(pady=10)
         tk.Button(milking_window, text="ปิด", command=milking_window.destroy).pack(pady=5)
+
 
 class GoatView:
     def __init__(self, root):
