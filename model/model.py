@@ -1,6 +1,12 @@
 import csv
 
 #class for loading FILE
+class cowModel:
+    pass
+
+class GoatModel:
+    pass
+
 class DataStorage:
     FILE_PATH = 'model/cow.csv'
 

@@ -8,4 +8,15 @@ class MainView:
         self.root.geometry("600x400")
 
     def create_window(self):
-        pass
+        # ส่วนของการรับรหัสวัว
+        self.label = tk.Label(self.root, text="กรุณากรอกรหัสวัว:")
+        self.label.pack(pady=10)
+
+        self.entry = tk.Entry(self.root)
+        self.entry.pack(pady=5)
+
+class CowView:
+    pass
+class GoatView:
+    pass
+
