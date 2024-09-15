@@ -1,4 +1,4 @@
-from model import DataStorage, CowModel, GoatModel
+from model import DataStorage, CowModel, GoatModel, CowStatusChanger
 from view.view import MainView, CowView, GoatView
 import tkinter as tk
 from tkinter import messagebox
@@ -29,12 +29,14 @@ class MainController:
 
     def handle_cow(self, cow):
         """
-        ตรวจสอบและแสดงผลการรีดนมของวัว
+        ตรวจสอบและแสดงผลการรีดนมของวัว รวมถึงการจัดการเปลี่ยนแปลงเต้านม
         """
         if CowModel.can_be_milked(cow):
             self.cow_view.show_milking_view(cow, can_milk=True)
+            CowStatusChanger.attempt_teat_change(cow)  # เรียกใช้การเปลี่ยนแปลงจำนวนเต้านมหลังการรีดนม
         else:
             self.cow_view.show_milking_view(cow, can_milk=False)
+            CowStatusChanger.attempt_teat_change(cow)  # เรียกใช้การเปลี่ยนแปลงในกรณีที่วัวมี 3 เต้า
 
     def handle_goat(self):
         """
@@ -42,6 +44,7 @@ class MainController:
         """
         GoatModel.handle_goat()
         self.goat_view.show_goat_view()
+
 
 
 

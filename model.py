@@ -1,14 +1,11 @@
 import csv
+import random
 
 class DataStorage:
-    FILE_PATH = 'model/cow.csv'  # ตรวจสอบให้แน่ใจว่าเส้นทางนี้ถูกต้อง
+    FILE_PATH = 'model/cow.csv'
 
     @staticmethod
     def load_file():
-        """
-        Load animal data from the CSV file.
-        Returns a list of dictionaries representing each animal.
-        """
         data = []
         try:
             with open(DataStorage.FILE_PATH, newline='', encoding='utf-8') as csvfile:
@@ -43,14 +40,24 @@ class GoatModel:
         """
         การดำเนินการเมื่อพบแพะในระบบ
         """
-        # การดำเนินการเมื่อพบแพะสามารถเพิ่มได้ตามต้องการ เช่น การส่งกลับไปที่ภูเขา
         print("พบแพะในระบบ ให้เตรียมส่งกลับไปที่ภูเขา")
 
 
-
-# Test the loading function
-if __name__ == '__main__':
-    data = DataStorage.load_file()  # Correctly calling the static method directly from the class
-    print(data)
-
-
+class CowStatusChanger:
+    @staticmethod
+    def attempt_teat_change(cow):
+        """
+        พิจารณาการเปลี่ยนแปลงจำนวนเต้านมของวัวตามเงื่อนไข:
+        - ถ้าวัวมี 4 เต้าและถูกรีดนม มีโอกาส 5% ที่จะลดลง 1 เต้า
+        - ถ้าวัวมี 3 เต้า มีโอกาส 20% ที่จะเพิ่มกลับมาเป็น 4 เต้า
+        """
+        if cow['Number of Teats'] == 4:
+            # โอกาส 5% ที่เต้านมจะลดลง 1 เต้า
+            if random.random() < 0.05:
+                cow['Number of Teats'] -= 1
+                print("เต้านมของวัวลดลงเหลือ 3 เต้าเนื่องจากการรีดนม")
+        elif cow['Number of Teats'] == 3:
+            # โอกาส 20% ที่เต้านมจะเพิ่มกลับมาเป็น 4 เต้า
+            if random.random() < 0.20:
+                cow['Number of Teats'] += 1
+                print("วัวกลับมามี 4 เต้าเนื่องจากการฟื้นตัว")
